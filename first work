@@ -1,0 +1,251 @@
+print("-=-" * 11)
+
+print( "-" * 3, "   ", "WELCOME TO PLANNER", "   ", "-" * 3)
+
+print("-=-" * 11)
+
+def main(): 
+
+    vet = upload_tasks()  
+
+    while True:
+        print("\n", "Choose an option: ")
+        print(" 1 - Add a task: ")
+        print(" 2 - Change task: ")
+        print(" 3 - Delete task: ")
+        print(" 4 - Search task: ")
+        print(" 5 - Search by category: ")
+        print(" 6 - List tasks: ")
+        print(" 7 - Exit: ")
+        option = int(input("> "))
+
+        if option == 1:
+            Add(vet)
+            Save_tasks(vet)
+        elif option == 2:
+            Change(vet)
+            Save_tasks(vet)
+        elif option == 3:
+            Delete(vet)
+            Save_tasks(vet)
+        elif option == 4:
+            Search(vet)
+        elif option == 5:
+            Search_category(vet)
+        elif option == 6:
+            listar(vet)
+        elif option == 7:
+            print("Exiting the program...")
+            break
+        else:
+            print("Invalid option, pleasee try again.")
+
+
+def Save_tasks(vet):
+    Archive = open("tasks.json", "w")
+
+    for planner_task in vet:
+        Archive.write("{}#{}#{}#{}\n".format(planner_task["task"], planner_task["category"], planner_task["notes"], planner_task["status"]))
+
+    Archive.close()
+
+
+def upload_tasks():
+    vet = []
+
+    try:
+       Archive = open("tasks.json", "r")
+
+       for line in Archive.readlines():
+           column = line.strip().split("#")
+
+           planner_task = {
+               "category": column[1],
+               "task": column[0],
+               "notes": column[2],
+               "status": column[3]
+           }
+           vet.append(planner_task)
+
+       Archive.close()
+    except FileNotFoundError:
+        pass
+
+    return vet
+
+
+def achar_category(vet, category):
+
+    if len(vet) > 0:
+        for planner_task in vet:
+            if planner_task["category"] == category:
+                return True
+
+    return False    
+
+
+def existe_task(vet, task):
+
+    if len(vet) > 0:
+        for planner_task in vet:
+            if planner_task["task"] == task:
+                return True
+
+    return False
+
+
+def Add(vet):
+    print("=" * 45)
+
+    while True:
+        task = input("\nEnter a task: ")
+
+        if not existe_task(vet, task):
+            break
+        else: 
+            print("This task has already been put.")
+            print("Please, try another task: ")
+    
+    planner_task = {
+        "task": task,
+        "category": input("Enter the task category: "),
+        "notes": input("Enter your notes: "),
+        "status": "In progress"
+    }
+
+    vet.append(planner_task)
+
+    print("The task {} was sucefully added! \n".format(planner_task["task"]))
+    print("=" * 45)
+
+           
+def Change(vet):
+    print("=" * 45)
+    print("\n == Change task == ")
+    if len(vet) > 0:
+
+        task = input("Enter a planner task to be changed: ")
+        if existe_task(vet, task):
+            print("The task was found. The information gets below: ")
+            for planner_task in vet:
+                if planner_task["task"] == task:
+                    print("\ntask: {}".format(planner_task["task"]))
+                    print("category: {}".format(planner_task["category"]))
+                    print("notes: {}".format(planner_task["notes"]))
+                    print("Status: {}".format(planner_task["status"]))
+                    print("=" * 45, "\n")
+
+                    planner_task["category"] = input("Enter a new category of the task: ")
+                    planner_task["notes"] = input("Enter a new note of the task: ")
+                    planner_task["status"] = input("The task was concluded? (y/n): ")
+                        
+                    print("\nThe data of the task {}, was changed with sucess!".format(planner_task["task"]))
+                    print("=" * 45)
+                    break
+        else: 
+            print("Doesn't exist this task register in sistem {}.\n".format(task))
+            print("=" * 45)
+    else: 
+        print("Doesn't exist any task in sistem.\n")
+        print("=" * 45)
+
+
+def Delete(vet):
+    print("=" * 45)
+    print("\n == Delete task == ")
+    if len(vet) > 0:
+
+        task = input("Enter a task of planner to be deleted: ")
+        if existe_task(vet, task):
+            print("The task was found. The information gets below: ")
+            for i, planner_task in enumerate(vet):
+                if planner_task["task"] == task:
+                    print("\ntask: {}".format(planner_task["task"]))
+                    print("category: {}".format(planner_task["category"]))
+                    print("notes: {}".format(planner_task["notes"]))
+                    print("Status: {}".format(planner_task["status"]))
+                    print("=" * 45, "\n")
+
+                    del vet[i] 
+                    print("The task was excluded with sucess!")
+                    print("=" * 45)
+                    break
+        else: 
+            print("Doesn't exist this task register in sistem {}.\n".format(task))
+            print("=" * 45)
+    else: 
+        print("Doesn't exist any task in sistem.\n")
+        print("=" * 45)
+
+
+def Search(vet):
+    print("=" * 45)
+    print("\n == Search task == ")
+    if len(vet) > 0:
+
+        task = input("Enter a task of planner to be found: ")
+        if existe_task(vet, task):
+            print("The task was found. The information gets below: ")
+            for planner_task in vet:
+                if planner_task["task"] == task:
+                    print("\ntask: {}".format(planner_task["task"]))
+                    print("category: {}".format(planner_task["category"]))
+                    print("notes: {}".format(planner_task["notes"]))
+                    print("Status: {}".format(planner_task["status"]))
+                    print("=" * 45)
+                    break
+        else: 
+            print("Doesn't exist this task register in sistem {}.\n".format(task))
+            print("=" * 45)
+    else: 
+        print("Doesn't exist any task in sistem.\n")
+        print("=" * 45)
+
+
+def Search_category(vet):
+    print("=" * 45)
+    print("\n == Search by category == ")
+    if len(vet) > 0:
+
+        category = input("Enter a category of planner to be found: ")
+        if achar_category(vet, category):
+            print("The categry was found. The information gets below: ")
+            for planner_task in vet:
+                if planner_task["category"] == category:
+                    print("\ntask: {}".format(planner_task["task"]))
+                    print("category: {}".format(planner_task["category"]))
+                    print("notes: {}".format(planner_task["notes"]))
+                    print("Status: {}".format(planner_task["status"]))
+                    print("=" * 45)
+                    continue
+        else: 
+            print("Doesn't exist this task register in sistem {}.\n".format(task))
+            print("=" * 45)
+    else: 
+        print("Doesn't exist any task in sistem.\n")
+        print("=" * 45)
+
+
+def listar(vet):
+    print("=" * 45)
+    print("\n == List tasks == ")
+    if len(vet) > 0:
+        for i, planner_task in enumerate(vet):
+            print("\ntask {}".format(i+1))
+            print("task: {}".format(planner_task["task"]))
+            print("category: {}".format(planner_task["category"]))
+            print("notes: {}".format(planner_task["notes"]))
+            print("Status: {}".format(planner_task["status"]))
+            if planner_task["status"] == "n":
+                print("Status: {}".format("in progress"))
+            elif planner_task["status"] == "y":
+                print("Status: {}".format("Concluded"))
+            print("=" * 45)
+
+        print("\nQuantity of tasks: {}.\n".format(len(vet)))
+        print("=" * 45)    
+    else: 
+        print("Doesn't exist any task in sistem.\n")
+        print("=" * 45)
+
+main()
